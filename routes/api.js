@@ -1,12 +1,35 @@
 const express = require('express');
-const validation = require('./validations');
+const validations = require('./validations');
 const Celebrate = require('celebrate');
 const Boom = require('boom');
 const router = express.Router();
 
 // GET API listing
-router.get('/', /*Celebrate(validation.resource-name.get),*/ (req, res, next) => {
-  res.send('respond with a resource');
+router.get('/', (req, res, next) => {
+  res.send('Did you mean /api/subsites/:id ?');
+});
+
+// GET sub sites list
+router.get('/subsites/:id', Celebrate(validations.subsites.get), (req, res, next) => {
+  let data = {};
+
+  switch (req.params.id) {
+    case 0:
+      res.json('0');
+      break;
+
+    case 1:
+      break;
+
+    case 2:
+      break;
+
+    default:
+      return next (Boom.notFound('ID not found', {name: 'aaa'}));
+      break;
+  }
+
+  res.json(data);
 });
 
 /**
