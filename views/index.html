@@ -10,7 +10,9 @@
 <div id="jstree">
 </div>
 <br>
-<button id="btn">Info</button>
+<button id="btnInfo">Info</button>
+<button id="btnEnable">Enable</button>
+<button id="btnRestore">Restore</button>
 <p id="info"></p>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/1.12.1/jquery.min.js"></script>
@@ -24,7 +26,7 @@
                 multiple: false,
                 data: function (node, cb) {
                     if (node.id == '#') {
-                        cb.call(this, { id: '1', text: 'Root', parentUrl: 'root.com', parent: '#', state: { opened: false, selected: true }, children: true });
+                        cb.call(this, { id: '1', text: 'Root', parentUrl: 'root.com', connected: false, parent: '#', state: { opened: false }, children: true });
                     } else {
                         // Replace with HTTP call (osapi)
                         setTimeout(function () {
@@ -38,7 +40,15 @@
                             var childList = [];
                             if (status == 200) {
                                 subSites.forEach(function (site) {
-                                    childList.push({ id: site.id, text: site.name, parentUrl: site.url, parent: node.id, children: true, state: { disabled: site.connected } });
+                                    childList.push({
+                                        id: site.id,
+                                        text: site.name,
+                                        parentUrl: site.url,
+                                        connected: site.connected,
+                                        parent: node.id,
+                                        children: true,
+                                        state: { disabled: site.connected },
+                                    });
                                 });
                             }
 
@@ -49,9 +59,32 @@
             }
         });
 
-        $('#btn').click(function () {
-            var node = $('#jstree').jstree(true).get_selected('id')[0];
-            $('#info').text(JSON.stringify({ id: node.id, name: node.text, url: node.original.parentUrl }));
+        $('#btnInfo').click(function () {
+            var node = $('#jstree').jstree(true).get_selected(true);
+            if (node.length) {
+                node = node[0];
+                $('#info').text(JSON.stringify({ id: node.id, name: node.text, url: node.original.parentUrl, connected: node.original.connected }));
+            } else {
+                $('#info').text('');
+            }
+        });
+
+        $('#btnEnable').click(function () {
+            $('#jstree li').each(function() {
+                $("#jstree").jstree(true).enable_node(this.id);
+            })
+        });
+
+        $('#btnRestore').click(function () {
+            $('#jstree li').each(function() {
+                if ($("#jstree").jstree(true).get_node(this.id).original.connected) {
+                    $("#jstree").jstree(true).disable_node(this.id);
+                }
+            });
+
+            if ($('#jstree').jstree(true).get_selected(true)[0].original.connected) {
+                $('#jstree').jstree(true).deselect_all();
+            }
         });
     });
 </script>
