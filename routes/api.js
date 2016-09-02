@@ -6,7 +6,7 @@ const router = express.Router();
 
 // GET API listing
 router.get('/', (req, res, next) => {
-  res.send('Did you mean /api/subsites/:id ?');
+  res.send('Did you mean /api/subsites/id ?');
 });
 
 // GET sub sites list
@@ -15,7 +15,7 @@ router.get('/subsites/:id', Celebrate(validations.subsites.get), (req, res, next
 
   switch (req.params.id) {
     case 0:
-      res.json('0');
+      data = {url: 'url-root', name: 'root', id: '123-456'};
       break;
 
     case 1:

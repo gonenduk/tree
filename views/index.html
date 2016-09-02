@@ -5,34 +5,55 @@
     <title>jsTree Test</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/jstree/3.2.1/themes/default/style.min.css" />
 </head>
-<body>
+<body style="display: none">
 
 <div id="jstree">
-    <ul>
-        <li>Root node 1
-            <ul>
-                <li id="child_node_1">Child node 1</li>
-                <li>Child node 2</li>
-            </ul>
-        </li>
-        <li>Root node 2</li>
-    </ul>
 </div>
-<button>demo button</button>
+<button id="btn">Click</button>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/1.12.1/jquery.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jstree/3.2.1/jstree.min.js"></script>
 <script>
     $(function () {
-        // 6 create an instance when the DOM is ready
-        $('#jstree').jstree();
-        // 7 bind to events triggered on the tree
-        $('#jstree').on("changed.jstree", function (e, data) {
-            console.log(data.selected);
+        $('body').show();
+
+        $('#jstree').jstree({
+            core: {
+                data: function (node, cb) {
+                    if (node.id == '#') {
+                        cb.call(this, [
+                            {
+                                id: '123-456',
+                                text: 'AAA',
+                                parent: '#',
+                                state: {opened: false, selected: true},
+                                children: true
+                            }
+                        ]);
+                    } else {
+                        cb.call(this, [
+                            {
+                                id: node.id + '1',
+                                text: 'AAA',
+                                parent: node.id,
+                                state: {opened: false, selected: true},
+                                children: true
+                            }
+                        ]);
+                    }
+                }
+            },
+            types: {
+                default: {
+                },
+                connected: {
+                }
+            },
+            plugins: ['types']
         });
-        // 8 interact with the tree - either way is OK
-        $('button').on('click', function () {
-            $('#jstree').jstree(true).select_node('child_node_1');
+
+        $('#btn').click(function () {
+            console.log($('#jstree').jstree(true).get_selected('id')[0]);
         });
     });
 </script>
