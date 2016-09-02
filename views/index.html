@@ -9,7 +9,9 @@
 
 <div id="jstree">
 </div>
-<button id="btn">Click</button>
+<br>
+<button id="btn">Info</button>
+<p id="info"></p>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/1.12.1/jquery.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jstree/3.2.1/jstree.min.js"></script>
@@ -19,41 +21,37 @@
 
         $('#jstree').jstree({
             core: {
+                multiple: false,
                 data: function (node, cb) {
                     if (node.id == '#') {
-                        cb.call(this, [
-                            {
-                                id: '123-456',
-                                text: 'AAA',
-                                parent: '#',
-                                state: {opened: false, selected: true},
-                                children: true
-                            }
-                        ]);
+                        cb.call(this, { id: '1', text: 'Root', parentUrl: 'root.com', parent: '#', state: { opened: false, selected: true }, children: true });
                     } else {
-                        cb.call(this, [
-                            {
-                                id: node.id + '1',
-                                text: 'AAA',
-                                parent: node.id,
-                                state: {opened: false, selected: true},
-                                children: true
+                        // Replace with HTTP call (osapi)
+                        setTimeout(function () {
+                            var subSites = [
+                                { id: node.id + '-1', name: 'AAA', url: 'http://' + node.id + '-1.com', connected: false },
+                                { id: node.id + '-2', name: 'BBB', url: 'http://' + node.id + '-2.com', connected: true }
+                            ];
+                            var status = 200;
+
+                            // Build child list
+                            var childList = [];
+                            if (status == 200) {
+                                subSites.forEach(function (site) {
+                                    childList.push({ id: site.id, text: site.name, parentUrl: site.url, parent: node.id, children: true, state: { disabled: site.connected } });
+                                });
                             }
-                        ]);
+
+                            cb.call(this, childList);
+                        }, 333);
                     }
                 }
-            },
-            types: {
-                default: {
-                },
-                connected: {
-                }
-            },
-            plugins: ['types']
+            }
         });
 
         $('#btn').click(function () {
-            console.log($('#jstree').jstree(true).get_selected('id')[0]);
+            var node = $('#jstree').jstree(true).get_selected('id')[0];
+            $('#info').text(JSON.stringify({ id: node.id, name: node.text, url: node.original.parentUrl }));
         });
     });
 </script>
