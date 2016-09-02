@@ -11,8 +11,8 @@
 </div>
 <br>
 <button id="btnInfo">Info</button>
+<button id="btnDisable">Disable</button>
 <button id="btnEnable">Enable</button>
-<button id="btnRestore">Restore</button>
 <p id="info"></p>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/1.12.1/jquery.min.js"></script>
@@ -47,7 +47,8 @@
                                         connected: site.connected,
                                         parent: node.id,
                                         children: true,
-                                        state: { disabled: site.connected },
+                                        state: { disabled: site.connected  && false },
+                                        icon: site.connected ? 'favicon.ico' : ''
                                     });
                                 });
                             }
@@ -75,7 +76,7 @@
             })
         });
 
-        $('#btnRestore').click(function () {
+        $('#btnDisable').click(function () {
             $('#jstree li').each(function() {
                 if ($("#jstree").jstree(true).get_node(this.id).original.connected) {
                     $("#jstree").jstree(true).disable_node(this.id);
